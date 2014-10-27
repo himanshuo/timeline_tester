@@ -32,10 +32,11 @@ def create_project(project_id, date, title, wiki, author, port):
     #returns a list? can you turn it into json?
     #print r.status_code
     ret=r.json()
+    #print "ret value with .json() is ",ret
     if ret[str(project_id)] == "Project Created." and r.status_code < 300:
-        ret[project_id] = "Project Created."
-        del ret[str(project_id)]
-        return ret
+        #ret[project_id] = "Project Created."
+        #del ret[str(project_id)]
+        return {project_id:"Project Created."}
     return ret
 
 
@@ -79,10 +80,11 @@ def update_project(project_id, date, port, title=None, wiki=None, author=None):
             '_content': payload}#after application, not sure if %2F or /
     r = requests.post('http://localhost:'+str(port)+'/update_project/', data=data)
     ret= r.json()
+    #print "ret value with .json() is ",ret
     if ret[str(project_id)] == "Project Updated." and r.status_code < 300:
-        ret[project_id] = "Project Updated."
-        del ret[str(project_id)]
-        return ret
+        #ret[project_id] = "Project Updated."
+        #del ret[str(project_id)]
+        return {project_id:"Project Updated."}
     return ret
 
 

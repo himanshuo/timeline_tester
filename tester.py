@@ -24,7 +24,7 @@ class TestTimeline():
                              "author": 'a1',
                              #"date": str(d),
                              "wiki":'w1'}
-        self.ports = [8000]
+        self.ports = [8000, 9000]
         #8000 is mongo
         #9000 is postgres
         #2424 is hybrid
@@ -71,14 +71,52 @@ class TestTimeline():
 
             t2 = time.time()
             delete_all_projects(p)
-            print "Port",p,": Went through all steps once for one project in",t2-t1,"seconds"
+            print "Port",p,": Went through all steps once for one project in",determine_avg_time([t2-t1], 1),"seconds"
+
+    def test_view_current_x_times_with_y_updates(self, num_times, num_updates ):
+        for p in self.ports:
+            list_of_times=[]
+
+            #initialize project creation
+            x = create_project(1,'09-20-2014', 't1','w1','a1', port=p)
+            if not self.works(test_name="test_view_current_x_times_with_y_updates", should_be={1:"Project Created."}, actually_is=x):
+                return
+            original = self.original.copy()
+            original['project_id']=1
+
+            #initialize updates
+            for i in range(1,num_updates):
+                y = update_project(1, date="09-20-"+str(2014+i), title='t'+str(1+i), port=p)
+                if not self.works(test_name='test_view_current_x_times_with_y_updates', should_be={1:"Project Updated."}, actually_is=y):
+                    return
+
+            original['title'] = "t"+str(num_updates)
+            #actual test
+            for i in range(0,num_times):
+                t1=time.time()
+
+                #main test here.
+                z = get_project(project_id=1, port=p)
+                if not self.works(test_name='test_view_current_x_times_with_y_updates', should_be=original, actually_is=z):
+                    return
+
+                t2=time.time()
+                list_of_times.append(t2-t1)
+
+
+            print "Port",p, ": Ran",num_times,"views of project with", num_updates,"updates in average of ", determine_avg_time(list_of_times, num_times),"seconds"
+            delete_all_projects(port=p)
+
+
+
+
 
 
     def test_simple_x_times(self, num_times):
         for p in self.ports:
             list_of_times = []
 
-            for i in range(1,num_times):
+            for i in range(1,num_times+1):
                 #clean
                 t1 = time.time()
                 original = self.original.copy()
@@ -199,7 +237,7 @@ class TestTimeline():
             print "Port",p,": Ran", num_views ,"views of project. Distance is",distance,"AVG time is",determine_avg_time(list_of_times, num_views),"seconds"
             delete_all_projects(p)
 
-    def test_original_version_with_x_updates_of_project(self, num_updates,num_views):
+    def test_original_version_x_times_with_y_updates_of_project(self, num_updates,num_views):
         for p in self.ports:
 
             list_of_times=[]
@@ -243,12 +281,12 @@ if __name__=="__main__":
 
         options[0]="Exit"
         options[1]="simple all steps"
-        options[2] ="thousand all steps"
-        options[3] ="thousand create project"
-        options[4] ="thousand updates(avg time to update each time)"
-        options[5] ="time to find old value that is 1000 spots away. determines avg time for 1000 such views"
-        options[6] ="view single project 1000 times with update spread 10,000 histories apart"
-        options[7] = "view original version 1000 times of project that has 1000 updates"
+        options[2] ="all steps x times"
+        options[3] ="create project x times"
+        options[4] ="x updates."
+        options[5] ="time to find old value that is x spots away. determines avg time for y such views"
+        options[6] ="view current project x times with update spread y histories apart"
+        options[7] = "view original version x times of project that has y updates"
         options[99]="delete everything from both db's (done automatically)'"
         test = TestTimeline()
 
@@ -256,17 +294,17 @@ if __name__=="__main__":
         def case1():
             test.test_simple()
         def case2():
-            test.test_simple_x_times(1000)
+            test.test_simple_x_times(int(input("x:")))
         def case3():
-            test.test_create_x_times(1000)
+            test.test_create_x_times(int(input("x:")))
         def case4():
-            test.test_x_updates(1000)
+            test.test_x_updates(int(input("x:")))
         def case5():
-            test.test_historical_view_of_x_distance(distance=1000,num_views=1000)
+            test.test_historical_view_of_x_distance(distance=int(input("x:")),num_views=int(input("y:")))
         def case6():
-            test.test_historical_view_of_x_distance(distance=10000,num_views=1000)
+            test.test_view_current_x_times_with_y_updates(num_times=int(input("x:")), num_updates=int(input("y:")))
         def case7():
-            test.test_original_version_with_x_updates_of_project(num_updates=1000, num_views=1000)
+            test.test_original_version_x_times_with_y_updates_of_project(num_views=int(input("x:")), num_updates=int(input("y:")) )
         def case99():
             test.delete_all_in_db()
 
