@@ -1,0 +1,23 @@
+Avg Time(n=1000) PG takes with 1 thread to get current value. There are 1000 updates. Each update is x spots away.
+
+x=1:   avg:40   std:6.73
+x=10:   avg:40   std:4.88
+x=20:   avg:38   std:6.03
+x=30:   avg:31   std:4.04
+x=50:   avg:32   std:4.37
+x=100:   avg:32   std:4.96
+x=200:   avg:32   std:4.40
+x=250:   avg:41   std:5.72
+no snapshots:    avg:42    std:5.12
+
+NOW, doing same thing but with more updates in between. 2k updates.
+
+x=1:   avg:40   std:6.73
+x=10:   avg:40   std:4.88
+x=20:   avg:38   std:6.03
+x=30:   avg:31   std:4.04
+x=50:   avg:32   std:4.37
+x=100:   avg:32   std:4.96
+x=200:   avg:32   std:4.40
+x=250:   avg:41   std:5.72
+no snapshots:    avg:42    std:5.12

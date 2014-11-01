@@ -1,0 +1,17 @@
+Conclusions from each test:
+
+
+simple all - 500 times- 2 threads
+	All steps - mongo takes less time and has less std dev
+simple all - 1000 times - 5 threads
+	same as 500 times - 2 threads
+create project - 1000 times- 5 threads
+	mongo better. same reason.
+update project - 1000 times 1 thread
+	pg is better. it has less variation and is faster
+update project - 1000 times 5 threads
+	pg is 10 times faster. also less variation. much better. makes sense.
+get current
+	mongo faster. less variation
+get historical
+	mongo faster. less variation
